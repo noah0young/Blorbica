@@ -112,6 +112,12 @@ public class NPCTextUI : MonoBehaviour
         }
     }
 
+    public void ChooseEvidence(Thought idea)
+    {
+        dialogue.ChoosePath(idea.GetName());
+        ContinueDialogue();
+    }
+
     protected void SetState(TextUIState state)
     {
         this.state = state;
