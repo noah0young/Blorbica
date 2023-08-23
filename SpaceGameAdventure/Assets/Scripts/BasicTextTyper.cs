@@ -22,7 +22,7 @@ public class BasicTextTyper : TextTyper
     public override void TypeText(TMP_Text textBox, string text)
     {
         this.textBox = textBox;
-        this.text = ParseText(text);
+        this.text = text.ToCharArray();//ParseText(text);
         typingRoutine = TypeTextRoutine();
         StartCoroutine(typingRoutine);
     }
@@ -62,7 +62,7 @@ public class BasicTextTyper : TextTyper
         }
     }
 
-    protected virtual char[] ParseText(string text)
+    /*protected virtual char[] ParseText(string text)
     {
         List<char> chars = new List<char>();
         // Parse string
@@ -87,7 +87,7 @@ public class BasicTextTyper : TextTyper
             res[i] = chars[i];
         }
         return res;
-    }
+    }*/
 }
 
 public interface BasicTextTyperCommand
