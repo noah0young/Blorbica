@@ -7,18 +7,18 @@ using UnityEngine;
 public class Dialogue
 {
     private int index = 0;
-    private List<string> text;
+    private List<Message> messages;
     protected Dialogue next; // if null, the dialogue ends
 
-    public Dialogue(List<string> text, Dialogue next)
+    public Dialogue(List<Message> messages, Dialogue next)
     {
-        this.text = text;
+        this.messages = messages;
         this.next = next;
     }
 
     public NPCTextUI.TextUIState NextTextState()
     {
-        if (index < text.Count)
+        if (index < messages.Count)
         {
             return MyTextState();
         }
@@ -28,7 +28,7 @@ public class Dialogue
         }
         else
         {
-            Debug.Log("index = " + index + ", count = " + text.Count);
+            Debug.Log("index = " + index + ", count = " + messages.Count);
             throw new System.Exception("Unknown state");
         }
     }
@@ -54,12 +54,12 @@ public class Dialogue
         }
     }
 
-    public virtual string Next()
+    public virtual Message Next()
     {
         if (InThisDialogue())
         {
             index += 1;
-            return text[index - 1];
+            return messages[index - 1];
         }
         else if (HasAnotherDialogue() && next.HasNext())
         {
@@ -94,7 +94,7 @@ public class Dialogue
 
     protected bool InThisDialogue()
     {
-        return index < text.Count;
+        return index < messages.Count;
     }
 
     public virtual void Reset()
@@ -110,7 +110,7 @@ public class Dialogue
     {
         if (InThisDialogue())
         {
-            Debug.Log("index = " + index + ", count = " + text.Count);
+            Debug.Log("index = " + index + ", count = " + messages.Count);
             throw new System.Exception("No paths exist right now");
         }
         else if (HasAnotherDialogue())
@@ -125,7 +125,7 @@ public class Dialogue
 
     protected bool IsLastLine()
     {
-        return index == text.Count - 1;
+        return index == messages.Count - 1;
     }
 }
 
@@ -134,7 +134,7 @@ public abstract class DialogueBranch : Dialogue
     // Which ever path you choose leads to a dialogue
     private Dictionary<string, Dialogue> chosenToDialogue;
 
-    public DialogueBranch(List<string> text, Dialogue next, Dictionary<string, Dialogue> chosenToDialogue) : base(text, next)
+    public DialogueBranch(List<Message> messages, Dialogue next, Dictionary<string, Dialogue> chosenToDialogue) : base(messages, next)
     {
         this.chosenToDialogue = chosenToDialogue;
     }
@@ -186,8 +186,8 @@ public class NoDialoguePathExists : System.Exception
 
 public class OptionsDialogueBranch : DialogueBranch
 {
-    public OptionsDialogueBranch(List<string> text, Dictionary<string, Dialogue> chosenToDialogue)
-        : base(text, null, chosenToDialogue) { }
+    public OptionsDialogueBranch(List<Message> messages, Dictionary<string, Dialogue> chosenToDialogue)
+        : base(messages, null, chosenToDialogue) { }
 
     protected override NPCTextUI.TextUIState MyTextState()
     {
@@ -203,8 +203,8 @@ public class PresentingDialogueBranch : DialogueBranch
 {
     private Dialogue incorrect;
 
-    public PresentingDialogueBranch(List<string> text, Dictionary<string, Dialogue> chosenToDialogue, Dialogue incorrect)
-        : base(text, null, chosenToDialogue)
+    public PresentingDialogueBranch(List<Message> messages, Dictionary<string, Dialogue> chosenToDialogue, Dialogue incorrect)
+        : base(messages, null, chosenToDialogue)
     {
         this.incorrect = incorrect;
     }
@@ -228,5 +228,50 @@ public class PresentingDialogueBranch : DialogueBranch
         {
             next = incorrect;
         }
+    }
+}
+
+public interface Message
+{
+    public string GetText();
+
+    public string GetName();
+
+    public Sprite GetNPCImage();
+}
+
+public class BasicMessage : Message
+{
+    private string text;
+    private string name;
+    private Sprite sprite;
+
+    public BasicMessage(string text)
+    {
+        this.text = text;
+        this.name = "???";
+        this.sprite = null;
+    }
+
+    public BasicMessage(string text, string name, Sprite sprite)
+    {
+        this.text = text;
+        this.name = name;
+        this.sprite = sprite;
+    }
+
+    public string GetName()
+    {
+        return name;
+    }
+
+    public Sprite GetNPCImage()
+    {
+        return sprite;
+    }
+
+    public string GetText()
+    {
+        return text;
     }
 }

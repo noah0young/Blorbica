@@ -36,31 +36,31 @@ public class StoryManager : MonoBehaviour
         }
         npcToDialogue = new Dictionary<string, Dialogue>();
         // Temp Dialogue
-        List<string> tempLines = new List<string>();
-        tempLines.Add("Hi there!");
-        tempLines.Add("Welcome!");
-        tempLines.Add("Wait, am I talking to you");
+        List<Message> tempLines = new List<Message>();
+        tempLines.Add(new BasicMessage("Hi there!"));
+        tempLines.Add(new BasicMessage("Welcome!"));
+        tempLines.Add(new BasicMessage("Wait, am I talking to you"));
         Dialogue tempDialogue = new Dialogue(tempLines, null);
         npcToDialogue.Add("", tempDialogue);
 
         // a Dialogue
-        tempLines = new List<string>();
-        tempLines.Add("Are you sure about that. To me, you are");
+        tempLines = new List<Message>();
+        tempLines.Add(new BasicMessage("Are you sure about that. To me, you are"));
         Dialogue tempDialogueNo = new Dialogue(tempLines, null);
-        tempLines = new List<string>();
-        tempLines.Add("You are!");
+        tempLines = new List<Message>();
+        tempLines.Add(new BasicMessage("You are!"));
         Dialogue tempDialogueYes = new Dialogue(tempLines, null);
         Dictionary<string, Dialogue> tempOptions = new Dictionary<string, Dialogue>();
         tempOptions.Add("Yes", tempDialogueYes);
         tempOptions.Add("No", tempDialogueNo);
-        tempLines = new List<string>();
-        tempLines.Add("Are you an abo?");
-        tempLines.Add("Like really truely an abo?");
-        tempLines.Add("Are you?");
+        tempLines = new List<Message>();
+        tempLines.Add(new BasicMessage("Are you an abo?"));
+        tempLines.Add(new BasicMessage("Like really truely an abo?"));
+        tempLines.Add(new BasicMessage("Are you?"));
         OptionsDialogueBranch tempDialogue2 = new OptionsDialogueBranch(tempLines, tempOptions);
-        tempLines = new List<string>();
-        tempLines.Add("Hi there");
-        tempLines.Add("First I will ask...");
+        tempLines = new List<Message>();
+        tempLines.Add(new BasicMessage("Hi there"));
+        tempLines.Add(new BasicMessage("First I will ask..."));
         tempDialogue = new Dialogue(tempLines, tempDialogue2);
         npcToDialogue.Add("a", tempDialogue);
     }
