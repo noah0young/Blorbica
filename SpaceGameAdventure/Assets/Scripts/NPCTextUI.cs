@@ -4,10 +4,12 @@ using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
 
+[RequireComponent(typeof(TextTyper))]
 public class NPCTextUI : MonoBehaviour
 {
     public static NPCTextUI instance { get; private set; }
 
+    [SerializeField] private GameObject preventSceneClicksCanvas;
     [Header("State")]
     [SerializeField] private GameObject talkingUI;
     [SerializeField] private GameObject optionsUI;
@@ -20,7 +22,10 @@ public class NPCTextUI : MonoBehaviour
 
     private Dialogue dialogue;
 
+    private TextTyper typer;
+
     [Header("Talking")]
+    [SerializeField] private TMP_Text talkingNameText;
     [SerializeField] private TMP_Text talkingText;
 
     [Header("Options")]
@@ -43,11 +48,13 @@ public class NPCTextUI : MonoBehaviour
         instance = this;
         DontDestroyOnLoad(gameObject);
         Hide();
+        typer = GetComponent<TextTyper>();
     }
 
     public void StartDialogue(Dialogue d)
     {
         this.dialogue = d;
+        preventSceneClicksCanvas.SetActive(true);
         StartCoroutine(RunDialogue());
     }
 
@@ -56,21 +63,25 @@ public class NPCTextUI : MonoBehaviour
         while (dialogue.HasNext())
         {
             SetState(dialogue.NextTextState());
-            switch(state)
+            Message message = dialogue.Next();
+            switch (state)
             {
                 case TextUIState.TALKING:
-                    talkingText.text = dialogue.Next(); // should become its own object for visualizing text
+                    talkingText.text = "";
+                    typer.TypeText(talkingText, message.GetText());
+                    //talkingText.text = message.GetText(); // should become its own object for visualizing text
                     // So that text can be typed out a letter at a time
+                    talkingNameText.text = message.GetName();
                     break;
                 case TextUIState.OPTIONS:
-                    optionsText.text = dialogue.Next();
+                    optionsText.text = message.GetText();
                     MakeOptions();
                     break;
                 case TextUIState.PRESENT_EVIDENCE:
-                    throw new System.Exception("not implemented yet");
+                    presentingText.text = message.GetText();
                     break;
             }
-            yield return new WaitUntil(() => optionPressed);
+            yield return new WaitUntil(() => optionPressed && typer.NotTyping());
             DestroyOptionObjects();
             optionPressed = false;
         }
@@ -79,7 +90,14 @@ public class NPCTextUI : MonoBehaviour
 
     public void ContinueDialogue()
     {
-        optionPressed = true;
+        if (typer.NotTyping())
+        {
+            optionPressed = true;
+        }
+        else
+        {
+            typer.ForceTypeAll();
+        }
     }
 
     private void DestroyOptionObjects()
@@ -143,5 +161,6 @@ public class NPCTextUI : MonoBehaviour
         talkingUI.SetActive(false);
         optionsUI.SetActive(false);
         presentingUI.SetActive(false);
+        preventSceneClicksCanvas.SetActive(false);
     }
 }
