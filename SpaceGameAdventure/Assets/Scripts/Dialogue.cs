@@ -1,14 +1,45 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Reflection;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class Dialogue
 {
     private int index = 0;
     private List<Message> messages;
     protected Dialogue next; // if null, the dialogue ends
+
+    public class Builder
+    {
+        public List<Message> messages;
+        public string defaultNextDialogue;
+        public Dictionary<string, string> nextDialoguePaths;
+
+        public Builder() { }
+
+        public virtual Dialogue Build(Dictionary<string, Builder> idToDialogue)
+        {
+            if (nextDialoguePaths.Count == 0)
+            {
+                Dialogue next = null;
+                if (defaultNextDialogue != null)
+                {
+                    next = idToDialogue[defaultNextDialogue].Build(idToDialogue);
+                }
+                return new Dialogue(messages, next);
+            }
+            else
+            {
+                Dictionary<string, Dialogue> chosenToDialogue = new Dictionary<string, Dialogue>();
+                foreach (string key in nextDialoguePaths.Keys)
+                {
+                    chosenToDialogue.Add(key, idToDialogue[nextDialoguePaths[key]].Build(idToDialogue));
+                }
+                return new OptionsDialogueBranch(messages, chosenToDialogue);
+            }
+        }
+    }
 
     public Dialogue(List<Message> messages, Dialogue next)
     {
@@ -209,6 +240,25 @@ public class PresentingDialogueBranch : DialogueBranch
         this.incorrect = incorrect;
     }
 
+    public new class Builder : Dialogue.Builder
+    {
+        public Builder() { }
+
+        public override Dialogue Build(Dictionary<string, Dialogue.Builder> idToDialogue)
+        {
+            Dictionary<string, Dialogue> chosenToDialogue = new Dictionary<string, Dialogue>();
+            foreach (string key in nextDialoguePaths.Keys)
+            {
+                chosenToDialogue.Add(key, idToDialogue[nextDialoguePaths[key]].Build(idToDialogue));
+            }
+            Dialogue next = null;
+            if (defaultNextDialogue != null) {
+                next = idToDialogue[defaultNextDialogue].Build(idToDialogue);
+            }
+            return new PresentingDialogueBranch(messages, chosenToDialogue, next);
+        }
+    }
+
     protected override NPCTextUI.TextUIState MyTextState()
     {
         if (IsLastLine())
@@ -231,33 +281,100 @@ public class PresentingDialogueBranch : DialogueBranch
     }
 }
 
+public class SceneRedirectDialogue : Dialogue
+{
+    private string nextScene;
+
+    public SceneRedirectDialogue(List<Message> messages, string nextScene) : base(messages, null)
+    {
+        this.nextScene = nextScene;
+    }
+
+    public new class Builder : Dialogue.Builder
+    {
+        public string nextScene = null;
+
+        public Builder() { }
+
+        public virtual Dialogue Build(Dictionary<string, Builder> idToDialogue)
+        {
+            if (nextDialoguePaths.Count != 0)
+            {
+                throw new Exception("A Scene Redirect cannot have branching dialogue");
+            }
+            else if (nextScene == null)
+            {
+                throw new Exception("Next scene cannot be null");
+            }
+            else
+            {
+                return new SceneRedirectDialogue(messages, nextScene);
+            }
+        }
+    }
+
+    public override bool HasNext()
+    {
+        return true;
+    }
+
+    public override Message Next()
+    {
+        if (IsLastLine())
+        {
+            SceneManager.LoadScene(nextScene);
+        }
+        return base.Next();
+    }
+}
+
 public interface Message
 {
     public string GetText();
 
     public string GetName();
 
-    public Sprite GetNPCImage();
+    public List<string> GetNPCsImageID();
+
+    public string GetNpcID();
+
+    public float GetFontSize();
 }
 
 public class BasicMessage : Message
 {
+    private string npcID;
     private string text;
     private string name;
-    private Sprite sprite;
+    private float fontSize; // Uses default if this is negative
+    private List<string> spriteIDs;
 
     public BasicMessage(string text)
     {
+        this.npcID = "";
         this.text = text;
         this.name = "???";
-        this.sprite = null;
+        fontSize = -1;
+        this.spriteIDs = new List<string>();
     }
 
-    public BasicMessage(string text, string name, Sprite sprite)
+    public BasicMessage(string npcID, string name, string text, float fontSize, List<string> spriteIDs)
     {
+        this.npcID = npcID;
         this.text = text;
         this.name = name;
-        this.sprite = sprite;
+        this.fontSize = fontSize;
+        this.spriteIDs = spriteIDs;
+    }
+
+    public string GetNpcID()
+    {
+        return npcID;
+    }
+
+    public float GetFontSize()
+    {
+        return fontSize;
     }
 
     public string GetName()
@@ -265,9 +382,9 @@ public class BasicMessage : Message
         return name;
     }
 
-    public Sprite GetNPCImage()
+    public List<string> GetNPCsImageID()
     {
-        return sprite;
+        return spriteIDs;
     }
 
     public string GetText()

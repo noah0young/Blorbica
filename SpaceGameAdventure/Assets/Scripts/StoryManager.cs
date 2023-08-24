@@ -13,7 +13,8 @@ public class StoryManager : MonoBehaviour
     [SerializeField] private string[] objectiveNames;
     [SerializeField] private string[] objectiveDescriptions;
     private static Objective[] objectives;
-    private static Dictionary<string, Dialogue> npcToDialogue;
+    [SerializeField] private string[] storyFilePaths;
+    //private static Dictionary<string, Dialogue> npcToDialogue;
 
     // Start is called before the first frame update
     void Start()
@@ -34,7 +35,8 @@ public class StoryManager : MonoBehaviour
         {
             objectives[i] = new Objective(objectiveNames[i], objectiveDescriptions[i]);
         }
-        npcToDialogue = new Dictionary<string, Dialogue>();
+        ScriptParser.Parse(storyFilePaths);
+        /*npcToDialogue = new Dictionary<string, Dialogue>();
         // Temp Dialogue
         List<Message> tempLines = new List<Message>();
         tempLines.Add(new BasicMessage("Hi there!"));
@@ -62,7 +64,7 @@ public class StoryManager : MonoBehaviour
         tempLines.Add(new BasicMessage("Hi there"));
         tempLines.Add(new BasicMessage("First I will ask..."));
         tempDialogue = new Dialogue(tempLines, tempDialogue2);
-        npcToDialogue.Add("a", tempDialogue);
+        npcToDialogue.Add("a", tempDialogue);*/
     }
 
     public static Objective GetNextObjective()
@@ -78,6 +80,6 @@ public class StoryManager : MonoBehaviour
 
     public static Dialogue GetDialogueFor(string npcID)
     {
-        return npcToDialogue[npcID];
+        return ScriptParser.GetDialogue(npcID);//npcToDialogue[npcID];
     }
 }
