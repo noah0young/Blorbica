@@ -1073,6 +1073,7 @@ GameObject:
   - component: {fileID: 4021972654451973285}
   - component: {fileID: 559129838705472316}
   - component: {fileID: 6577806872408894636}
+  - component: {fileID: 3287574956366111668}
   m_Layer: 0
   m_Name: NPCTextUI
   m_TagString: Untagged
@@ -1232,6 +1233,38 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   timeBetweenChar: 0.1
   charSound: {fileID: 8300000, guid: df5aac98f8c1044f39847dad60c2c1f0, type: 3}
+--- !u!114 &3287574956366111668
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6140689013607624782}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d4aff018576b9480cb53147b427232ae, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  defaultSFX: {fileID: 8300000, guid: df5aac98f8c1044f39847dad60c2c1f0, type: 3}
+  sfx:
+  - {fileID: 8300000, guid: df5aac98f8c1044f39847dad60c2c1f0, type: 3}
+  - {fileID: 8300000, guid: 73de65fc315274e4293f67ee7bf2e6b9, type: 3}
+  - {fileID: 8300000, guid: 73de65fc315274e4293f67ee7bf2e6b9, type: 3}
+  sfxNames:
+  - youSound
+  - roboticSound
+  - foodSound
+  defaultFont: {fileID: 11400000, guid: 9008c9b0b86c2f64e909cf71087b7115, type: 2}
+  fonts:
+  - {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  - {fileID: 11400000, guid: 2e498d1c8094910479dc3e1b768306a4, type: 2}
+  - {fileID: 11400000, guid: 2e498d1c8094910479dc3e1b768306a4, type: 2}
+  fontNames:
+  - Philosopher
+  - Orbitron
+  - Lobster
+  colors: []
+  colorNames: []
 --- !u!1 &6328688787821353545
 GameObject:
   m_ObjectHideFlags: 0

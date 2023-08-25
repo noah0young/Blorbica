@@ -134,7 +134,6 @@ public static class ScriptParser
     public static string RemoveLeadingSpaces(string str)
     {
         int startIndex = 0;
-        Debug.Log("str = " + str);
         while (startIndex < str.Length && str[startIndex] == ' ')
         {
             startIndex++;
@@ -335,6 +334,10 @@ public static class ScriptParser
     {
         string varName = RemoveSurroundingSpaces(ReadBetween(line, "", "="));
         string val = RemoveSurroundingSpaces(ReadBetween(line, "=", ";"));
+        if (val.Contains("\""))
+        {
+            val = ReadBetween(val, "\"", "\"");
+        }
         if (curNPCBuilder != null)
         {
             switch (varName)
@@ -436,7 +439,7 @@ public class NPCData
         public string backgroundColorID = null;
         public string textBoxImageID = null;
         public string talkSoundID = null;
-        public float defaultFontSize = 10;
+        public float defaultFontSize = 67.7f;
 
         public Builder() { }
 

@@ -68,4 +68,5 @@ talkSound = null;
 ["You", "You", "Am I sure?"]
 <"Yes", Dialogue : "dialogueIDTest">
 <"No", Dialogue : "dialogueIDTest2">
+<"To SampleScene", Scene : "SampleScene">
 </>

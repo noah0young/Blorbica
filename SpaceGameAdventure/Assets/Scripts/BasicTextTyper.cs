@@ -10,6 +10,9 @@ public class BasicTextTyper : TextTyper
     [SerializeField] private AudioClip charSound;
     protected AudioSource audioSource;
     private IEnumerator typingRoutine;
+    private Color color;
+    private float fontSize;
+    private TMP_FontAsset font;
     private TMP_Text textBox;
     private char[] text;
     //private Dictionary<int, BasicTextTyperCommand.BasicTextTyperCommandMethod> 
@@ -22,6 +25,9 @@ public class BasicTextTyper : TextTyper
     public override void TypeText(TMP_Text textBox, string text)
     {
         this.textBox = textBox;
+        this.textBox.font = font;
+        this.textBox.color = color;
+        this.textBox.fontSize = fontSize;
         this.text = text.ToCharArray();//ParseText(text);
         typingRoutine = TypeTextRoutine();
         StartCoroutine(typingRoutine);
@@ -60,6 +66,26 @@ public class BasicTextTyper : TextTyper
             typingRoutine = null;
             this.textBox.text = new string(this.text);
         }
+    }
+
+    public override void SetSound(AudioClip sfx)
+    {
+        charSound = sfx;
+    }
+
+    public override void SetFont(TMP_FontAsset font)
+    {
+        this.font = font;
+    }
+
+    public override void SetFontSize(float size)
+    {
+        this.fontSize = size;
+    }
+
+    public override void SetTextColor(Color color)
+    {
+        this.color = color;
     }
 
     /*protected virtual char[] ParseText(string text)

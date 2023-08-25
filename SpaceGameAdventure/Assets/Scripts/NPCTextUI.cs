@@ -16,7 +16,7 @@ public class NPCTextUI : MonoBehaviour
     [SerializeField] private GameObject presentingUI;
     public enum TextUIState
     {
-        TALKING, OPTIONS, PRESENT_EVIDENCE
+        TALKING, OPTIONS, PRESENT_EVIDENCE, SCENE_TRANSITION
     }
     private TextUIState state;
 
@@ -65,6 +65,7 @@ public class NPCTextUI : MonoBehaviour
         {
             SetState(dialogue.NextTextState());
             Message message = dialogue.Next();
+            SetNPC(message.GetNpcID());
             switch (state)
             {
                 case TextUIState.TALKING:
@@ -82,11 +83,24 @@ public class NPCTextUI : MonoBehaviour
                     presentingText.text = message.GetText();
                     break;
             }
+            if (state == TextUIState.SCENE_TRANSITION)
+            {
+                break;
+            }
             yield return new WaitUntil(() => optionPressed && typer.NotTyping());
             DestroyOptionObjects();
             optionPressed = false;
         }
         Hide();
+    }
+
+    private void SetNPC(string id)
+    {
+        NPCData npc = ScriptParser.GetNPCData(id);
+        typer.SetSound(NPCAssetManager.instance.GetSound(npc.talkSoundID));
+        typer.SetTextColor(NPCAssetManager.instance.GetColor(npc.textColorID));
+        typer.SetFontSize(npc.defaultFontSize);
+        typer.SetFont(NPCAssetManager.instance.GetFont(npc.fontID));
     }
 
     public void SetName(string name)

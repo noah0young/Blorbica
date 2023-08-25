@@ -296,9 +296,9 @@ public class SceneRedirectDialogue : Dialogue
 
         public Builder() { }
 
-        public virtual Dialogue Build(Dictionary<string, Builder> idToDialogue)
+        public override Dialogue Build(Dictionary<string, Dialogue.Builder> idToDialogue)
         {
-            if (nextDialoguePaths.Count != 0)
+            if (nextDialoguePaths != null && nextDialoguePaths.Count != 0)
             {
                 throw new Exception("A Scene Redirect cannot have branching dialogue");
             }
@@ -308,6 +308,9 @@ public class SceneRedirectDialogue : Dialogue
             }
             else
             {
+                messages = new List<Message>();
+                messages.Add(new BasicMessage(""));
+                // This needs at least one message so the Next method will be called
                 return new SceneRedirectDialogue(messages, nextScene);
             }
         }
@@ -325,6 +328,11 @@ public class SceneRedirectDialogue : Dialogue
             SceneManager.LoadScene(nextScene);
         }
         return base.Next();
+    }
+
+    protected override NPCTextUI.TextUIState MyTextState()
+    {
+        return NPCTextUI.TextUIState.SCENE_TRANSITION;
     }
 }
 
