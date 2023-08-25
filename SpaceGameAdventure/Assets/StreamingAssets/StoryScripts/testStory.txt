@@ -1,0 +1,71 @@
+// Test NPCs
+{NPC : "You"}
+timeBetweenChars = .1;
+defaultSprite = "PreviousSprite";
+font = "Philosopher";
+textBoxImage = "youImage";
+talkSound = "youSound";
+</>
+{NPC : "Police"}
+timeBetweenChars = .1;
+defaultSprite = "bobbyNeutral";
+font = "Comic Sans";
+textBoxImage = "policeImage";
+talkSound = "policeSound";
+</>
+{NPC : "Scientist"}
+timeBetweenChars = .05;
+defaultSprite = "scientistNeutral";
+font = "Orbitron";
+textBoxImage = "scienceImage";
+talkSound = "roboticSound";
+</>
+{NPC : "Waiter"}
+defaultSprite = "waiterNeutral";
+font = "Lobster";
+textBoxImage = "waiterImage";
+talkSound = "foodSound";
+</>
+{NPC : "HotelStaff"}
+defaultSprite = "hotelStaffNeutral";
+font = "pacifico";
+textBoxImage = "hotelImage";
+talkSound = "cleanSound";
+</>
+{NPC : "Welcomer"}
+defaultSprite = "welcomeNeutral";
+textBoxImage = "welcomeImage";
+</>
+{NPC : "Manager"}
+defaultSprite = "laptopNeutral";
+font = "Press Start 2P";
+textBoxImage = "laptopImage";
+talkSound = null;
+</>
+
+// Test Dialogues
+{Dialogue : "dialogueIDTest"}
+["You", null, "Hi there!"]
+["You", "You", "It's me!"]
+</>
+{Dialogue : "dialogueIDTest2"}
+["Scientist", "Scientist", "Can I say what that person is saying"]
+["Scientist", "Scientist", "And that is..."]
+<Dialogue : "dialogueIDTest">
+</>
+{Dialogue : "dialogueIDTest3"}
+["Waiter", "Waiter", "What do you think?"]
+<"Yes", Dialogue : "dialogueIDTest">
+<"No", Dialogue : "dialogueIDTest2">
+<"Something", Dialogue : "dialogueIDTest4">
+<"Nothing", Dialogue : "dialogueIDTest5">
+</>
+{Dialogue : "dialogueIDTest4"}
+["You", "You", "Yes, I do think something"]
+<Dialogue : "dialogueIDTest">
+</>
+{Dialogue : "dialogueIDTest5"}
+["You", "You", "Am I sure?"]
+<"Yes", Dialogue : "dialogueIDTest">
+<"No", Dialogue : "dialogueIDTest2">
+</>

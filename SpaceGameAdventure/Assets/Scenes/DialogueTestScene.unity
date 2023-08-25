@@ -320,7 +320,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 8413459935655851445, guid: 67f8e11e9836c4fe884792b74246192b, type: 3}
       propertyPath: id
-      value: a
+      value: dialogueIDTest2
       objectReference: {fileID: 0}
     - target: {fileID: 8413459935655851447, guid: 67f8e11e9836c4fe884792b74246192b, type: 3}
       propertyPath: m_Color.b
@@ -777,6 +777,14 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 180140811438002180, guid: b6dd5c8bf8de2445b96207d438c35f9b, type: 3}
+      propertyPath: storyFilePaths.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 180140811438002180, guid: b6dd5c8bf8de2445b96207d438c35f9b, type: 3}
+      propertyPath: storyFilePaths.Array.data[0]
+      value: testStory.txt
+      objectReference: {fileID: 0}
     - target: {fileID: 1180125661167448428, guid: b6dd5c8bf8de2445b96207d438c35f9b, type: 3}
       propertyPath: m_Name
       value: GameManager
@@ -1094,6 +1102,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 2036847906}
     m_Modifications:
+    - target: {fileID: 8413459935655851445, guid: 67f8e11e9836c4fe884792b74246192b, type: 3}
+      propertyPath: id
+      value: dialogueIDTest3
+      objectReference: {fileID: 0}
     - target: {fileID: 8413459935655851450, guid: 67f8e11e9836c4fe884792b74246192b, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
