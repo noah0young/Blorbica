@@ -31,7 +31,7 @@ public static class ScriptParser
     {
         foreach (string filePath in filePaths)
         {
-            ParseFile(filePath);
+            ParseFile(Application.streamingAssetsPath + "/StoryScripts/" + filePath);
         }
     }
 
@@ -79,8 +79,14 @@ public static class ScriptParser
         {
             throw new System.Exception("End does not exist in ReadBetween");
         }
-        int readStart = text.IndexOf(start) + start.Length;
-        int readEnd = text.IndexOf(end);
+        int readStart = IndexOfOutOfQuote(text, start) + start.Length;//text.IndexOf(start) + start.Length;
+        int readEnd = IndexOfOutOfQuote(text, end, readStart);//text.IndexOf(end, readStart);
+        if (readEnd < readStart)
+        {
+            Debug.Log("end = " + readEnd);
+            Debug.Log("start = " + readStart);
+            throw new System.Exception("readEnd is less than readStart, text  = " + text + ", start = " + start + ", end = " + end);
+        }
         return text.Substring(readStart, readEnd - readStart);
     }
 
@@ -88,23 +94,77 @@ public static class ScriptParser
     {
         string subtext = ReadBetween(text, start, end);
         List<string> list = new List<string>();
-        while (subtext.Contains(separator))
+        while (IndexOfOutOfQuote(subtext, separator) != -1)//subtext.Contains(separator))
         {
-            int indexOfSeparator = subtext.IndexOf(separator);
+            int indexOfSeparator = IndexOfOutOfQuote(subtext, separator);//subtext.IndexOf(separator);
             list.Add(subtext.Substring(0, indexOfSeparator));
             subtext = subtext.Substring(indexOfSeparator + 1);
         }
+        list.Add(subtext);
         return list;
+    }
+
+    public static int IndexOfOutOfQuote(string text, string s)
+    {
+        return IndexOfOutOfQuote(text, s, 0);
+    }
+
+    public static int IndexOfOutOfQuote(string text, string s, int startIndex)
+    {
+        bool inQuote = false;
+        for (int i = startIndex; i < text.Length - s.Length + 1; i++)
+        {
+            bool prevInQuote = inQuote;
+            if ((text.Substring(i, 1) == "\"") && (i == 0 || text.Substring(i - 1, 2) != "\\\""))
+            {
+                inQuote = !inQuote;
+            }
+
+            if (!inQuote || !prevInQuote)
+            {
+                if (text.Substring(i, s.Length) == s)
+                {
+                    return i;
+                }
+            }
+        }
+        return -1;
     }
 
     public static string RemoveLeadingSpaces(string str)
     {
         int startIndex = 0;
-        while (str[startIndex] == ' ')
+        Debug.Log("str = " + str);
+        while (startIndex < str.Length && str[startIndex] == ' ')
         {
             startIndex++;
         }
         return str.Substring(startIndex);
+    }
+
+    public static string RemoveEndSemiColonIfThere(string str)
+    {
+        if (str == null || str == "")
+        {
+            return str;
+        }
+        int lastCharIndex = str.Length - 1;
+        if (str[lastCharIndex] == ';')
+        {
+            return str.Substring(0, lastCharIndex);
+        }
+        return str;
+    }
+
+    public static string RemoveSurroundingSpaces(string str)
+    {
+        str = RemoveLeadingSpaces(str);
+        int endIndex = str.Length;
+        while (endIndex > 0 && str[endIndex - 1] == ' ')
+        {
+            endIndex--;
+        }
+        return str.Substring(0, endIndex);
     }
 
     private static ParserLineType GetLineType(string line)
@@ -165,11 +225,13 @@ public static class ScriptParser
         else if (objectType.Contains("Dialogue"))
         {
             curDialogueBuilder = new Dialogue.Builder();
+            curDialogueBuilder.nextDialoguePaths = new Dictionary<string, string>();
             dialogueBuilders.Add(objectID, curDialogueBuilder);
         }
         else if (objectType.Contains("PresentingDialogue"))
         {
             curDialogueBuilder = new PresentingDialogueBranch.Builder();
+            curDialogueBuilder.nextDialoguePaths = new Dictionary<string, string>();
             dialogueBuilders.Add(objectID, curDialogueBuilder);
         }
         else
@@ -217,7 +279,9 @@ public static class ScriptParser
         {
             // This is a path option
             string option = ReadBetween(line, "\"", "\"");
-            line = line.Substring(line.IndexOf("\"", 1));
+            line = line.Substring(line.IndexOf(",", line.IndexOf("\"", 1)) + 1);
+            // Index of first comma after the first end quote
+            // Really the index of the comma between the option and the resulting path
             AddDialoguePathHelper(option, line, lineNum);
         }
         else
@@ -262,14 +326,15 @@ public static class ScriptParser
         }
         else
         {
+            Debug.Log("next dialogue type is " + nextDialogueType);
             throw new System.Exception("Next Dialogue Type is unknown at line " + lineNum);
         }
     }
 
     private static void Setter(string line, int lineNum)
     {
-        string varName = ReadBetween(line, "", "=");
-        string val = ReadBetween(line, "=", "");
+        string varName = RemoveSurroundingSpaces(ReadBetween(line, "", "="));
+        string val = RemoveSurroundingSpaces(ReadBetween(line, "=", ";"));
         if (curNPCBuilder != null)
         {
             switch (varName)
@@ -277,22 +342,22 @@ public static class ScriptParser
                 case "timeBetweenChars":
                     curNPCBuilder.timeBetweenChars = float.Parse(val);
                     break;
-                case "defaultSpriteID":
+                case "defaultSprite":
                     curNPCBuilder.defaultSpriteID = val;
                     break;
-                case "fontID":
+                case "font":
                     curNPCBuilder.fontID = val;
                     break;
-                case "textColorID":
+                case "textColor":
                     curNPCBuilder.textColorID = val;
                     break;
-                case "backgroundColorID":
+                case "backgroundColor":
                     curNPCBuilder.backgroundColorID = val;
                     break;
-                case "textBoxImageID":
+                case "textBoxImage":
                     curNPCBuilder.textBoxImageID = val;
                     break;
-                case "talkSoundID":
+                case "talkSound":
                     curNPCBuilder.talkSoundID = val;
                     break;
                 case "defaultFontSize":
@@ -323,9 +388,17 @@ public static class ScriptParser
         {
             throw new System.Exception("Message must contain an npcID, name, and text at line " + lineNum);
         }
-        string npcID = paramList[0];
+        string npcID = ReadBetween(paramList[0], "\"", "\"");
         string name = paramList[1];
-        string text = paramList[2];
+        if (name.Contains("null") && !name.Contains("\""))
+        {
+            name = null;
+        }
+        else
+        {
+            name = ReadBetween(paramList[1], "\"", "\"");
+        }
+        string text = ReadBetween(paramList[2], "\"", "\"");
         float fontSize = -1;
         List<string> spriteIDs = new List<string>();
         if (paramList.Count > 3)

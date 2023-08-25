@@ -27,6 +27,7 @@ public class NPCTextUI : MonoBehaviour
     [Header("Talking")]
     [SerializeField] private TMP_Text talkingNameText;
     [SerializeField] private TMP_Text talkingText;
+    [SerializeField] private GameObject talkingNameBox;
 
     [Header("Options")]
     [SerializeField] private TMP_Text optionsText;
@@ -71,7 +72,7 @@ public class NPCTextUI : MonoBehaviour
                     typer.TypeText(talkingText, message.GetText());
                     //talkingText.text = message.GetText(); // should become its own object for visualizing text
                     // So that text can be typed out a letter at a time
-                    talkingNameText.text = message.GetName();
+                    SetName(message.GetName());
                     break;
                 case TextUIState.OPTIONS:
                     optionsText.text = message.GetText();
@@ -86,6 +87,19 @@ public class NPCTextUI : MonoBehaviour
             optionPressed = false;
         }
         Hide();
+    }
+
+    public void SetName(string name)
+    {
+        if (name != null)
+        {
+            talkingNameText.text = name;
+            talkingNameBox.SetActive(true);
+        }
+        else
+        {
+            talkingNameBox.SetActive(false);
+        }
     }
 
     public void ContinueDialogue()

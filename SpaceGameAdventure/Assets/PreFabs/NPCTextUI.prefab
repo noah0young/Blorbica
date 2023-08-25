@@ -1116,6 +1116,7 @@ MonoBehaviour:
   presentingUI: {fileID: 5653112748546691722}
   talkingNameText: {fileID: 298676531789347229}
   talkingText: {fileID: 1575707381816680209}
+  talkingNameBox: {fileID: 1079432185637185212}
   optionsText: {fileID: 4478123244774235778}
   optionsHolder: {fileID: 5459417652420992954}
   optionPrefab: {fileID: 6786264732841907179, guid: f5386e8b79c17429a9030794da1aacd1, type: 3}
