@@ -38,7 +38,11 @@ public class NPCTextUI : MonoBehaviour
 
     [Header("Presenting")]
     [SerializeField] private TMP_Text presentingText;
-    [SerializeField] private Button[] presentButtons;
+
+    [Header("NPC Sprite")]
+    [SerializeField] private GameObject npcSpriteHolder;
+    [SerializeField] private GameObject npcSpritePreFab;
+    private GameObject[] curNPCSprites;
 
     private void Start()
     {
@@ -50,6 +54,32 @@ public class NPCTextUI : MonoBehaviour
         DontDestroyOnLoad(gameObject);
         Hide();
         typer = GetComponent<TextTyper>();
+    }
+
+    private void CreateSprites(Sprite[] sprites)
+    {
+        RemoveAllSprites();
+        npcSpriteHolder.SetActive(true);
+        curNPCSprites = new GameObject[sprites.Length];
+        for (int i = 0; i < sprites.Length; i++)
+        {
+            GameObject npcSpriteObj = Instantiate(npcSpritePreFab, npcSpriteHolder.transform);
+            npcSpritePreFab.GetComponent<Image>().sprite = sprites[i];
+            curNPCSprites[i] = npcSpriteObj;
+        }
+    }
+
+    private void RemoveAllSprites()
+    {
+        npcSpriteHolder.SetActive(false);
+        if (curNPCSprites != null)
+        {
+            foreach (GameObject spriteObj in curNPCSprites)
+            {
+                Destroy(spriteObj);
+            }
+            curNPCSprites = null;
+        }
     }
 
     public void StartDialogue(Dialogue d)
@@ -66,6 +96,7 @@ public class NPCTextUI : MonoBehaviour
             SetState(dialogue.NextTextState());
             Message message = dialogue.Next();
             SetNPC(message.GetNpcID());
+            SetNPCImages(message.GetNPCsImageID());
             switch (state)
             {
                 case TextUIState.TALKING:
@@ -81,6 +112,7 @@ public class NPCTextUI : MonoBehaviour
                     break;
                 case TextUIState.PRESENT_EVIDENCE:
                     presentingText.text = message.GetText();
+                    GameManager.SetPresentingUI();
                     break;
             }
             if (state == TextUIState.SCENE_TRANSITION)
@@ -90,8 +122,13 @@ public class NPCTextUI : MonoBehaviour
             yield return new WaitUntil(() => optionPressed && typer.NotTyping());
             DestroyOptionObjects();
             optionPressed = false;
+            if (!dialogue.HasNext())
+            {
+                dialogue = dialogue.GetNextDialogue();
+            }
         }
         Hide();
+        RemoveAllSprites();
     }
 
     private void SetNPC(string id)
@@ -101,6 +138,16 @@ public class NPCTextUI : MonoBehaviour
         typer.SetTextColor(NPCAssetManager.instance.GetColor(npc.textColorID));
         typer.SetFontSize(npc.defaultFontSize);
         typer.SetFont(NPCAssetManager.instance.GetFont(npc.fontID));
+    }
+
+    private void SetNPCImages(List<string> ids)
+    {
+        Sprite[] sprites = new Sprite[ids.Count];
+        for (int i = 0; i < sprites.Length; i++)
+        {
+            sprites[i] = NPCAssetManager.instance.GetSprite(ids[i]);
+        }
+        CreateSprites(sprites);
     }
 
     public void SetName(string name)
@@ -160,7 +207,14 @@ public class NPCTextUI : MonoBehaviour
 
     public void ChooseEvidence(Thought idea)
     {
-        dialogue.ChoosePath(idea.GetName());
+        if (idea != null)
+        {
+            dialogue.ChoosePath(idea.GetName());
+        }
+        else
+        {
+            dialogue.ChoosePath(null);
+        }
         ContinueDialogue();
     }
 

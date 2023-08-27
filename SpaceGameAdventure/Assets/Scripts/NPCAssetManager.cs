@@ -21,7 +21,15 @@ public class NPCAssetManager : MonoBehaviour
     [SerializeField] private Color[] colors;
     [SerializeField] private string[] colorNames;
 
-    private void Start()
+    [Header("Evidence")]
+    [SerializeField] private BasicThought[] evidence;
+    [SerializeField] private string[] evidenceNames;
+
+    [Header("Sprites")]
+    [SerializeField] private Sprite[] sprites;
+    [SerializeField] private string[] spriteNames;
+
+    private void Awake()
     {
         if (instance != null)
         {
@@ -33,7 +41,6 @@ public class NPCAssetManager : MonoBehaviour
 
     public AudioClip GetSound(string id)
     {
-        Debug.Log("id = " + id);
         if (id == null)
         {
             return defaultSFX;
@@ -42,11 +49,9 @@ public class NPCAssetManager : MonoBehaviour
         {
             if (id == sfxNames[i])
             {
-                Debug.Log("Found something");
                 return sfx[i];
             }
         }
-        Debug.Log("Found nothing");
         return null;
     }
 
@@ -76,5 +81,29 @@ public class NPCAssetManager : MonoBehaviour
             }
         }
         return Color.black;
+    }
+
+    public Thought GetEvidence(string id)
+    {
+        for (int i = 0; i < evidence.Length; i++)
+        {
+            if (id == evidenceNames[i])
+            {
+                return evidence[i];
+            }
+        }
+        throw new System.Exception("No Evidence Exists for that ID");
+    }
+
+    public Sprite GetSprite(string id)
+    {
+        for (int i = 0; i < sprites.Length; i++)
+        {
+            if (id == spriteNames[i])
+            {
+                return sprites[i];
+            }
+        }
+        throw new System.Exception("No Sprite Exists for that ID, id = " + id);
     }
 }

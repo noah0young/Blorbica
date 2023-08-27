@@ -15,33 +15,49 @@ public class BasicTextTyper : TextTyper
     private TMP_FontAsset font;
     private TMP_Text textBox;
     private char[] text;
-    //private Dictionary<int, BasicTextTyperCommand.BasicTextTyperCommandMethod> 
+    private int index = 0;
+    private Dictionary<int, BasicTextTyperCommand> locToTextCommand
+        = new Dictionary<int, BasicTextTyperCommand>();
+    private Dictionary<string, BasicTextTyperCommand.Build> idToCommand;
 
     private void Start()
     {
         audioSource = GetComponent<AudioSource>();
+        InitPossibleCommands();
+    }
+
+    protected void InitPossibleCommands()
+    {
+        idToCommand = new Dictionary<string, BasicTextTyperCommand.Build>();
+        idToCommand.Add("gain evidence", AddEvidenceCommand.GetBuild());
     }
 
     public override void TypeText(TMP_Text textBox, string text)
     {
+        locToTextCommand = new Dictionary<int, BasicTextTyperCommand>();
         this.textBox = textBox;
         this.textBox.font = font;
         this.textBox.color = color;
         this.textBox.fontSize = fontSize;
-        this.text = text.ToCharArray();//ParseText(text);
+        this.text = ParseText(text);
         typingRoutine = TypeTextRoutine();
         StartCoroutine(typingRoutine);
     }
 
     protected IEnumerator TypeTextRoutine()
     {
-        for (int i = 0; i < text.Length; i++)
+        for (int index = 0; index < text.Length; index++)
         {
-            textBox.text += text[i];
-            PlaySound(charSound, text, i);
+            textBox.text += text[index];
+            PlaySound(charSound, text, index);
+            if (locToTextCommand.ContainsKey(index))
+            {
+                locToTextCommand[index].ChangeBasicTextTyper();
+            }
             yield return new WaitForSeconds(timeBetweenChar);
         }
         typingRoutine = null;
+        locToTextCommand = null;
     }
 
     protected virtual void PlaySound(AudioClip charSound, char[] text, int index)
@@ -65,6 +81,19 @@ public class BasicTextTyper : TextTyper
             StopCoroutine(typingRoutine);
             typingRoutine = null;
             this.textBox.text = new string(this.text);
+            RunCommandsAfter();
+            locToTextCommand = null;
+        }
+    }
+
+    private void RunCommandsAfter()
+    {
+        for (;  index < text.Length; index++)
+        {
+            if (locToTextCommand.ContainsKey(index))
+            {
+                locToTextCommand[index].ChangeBasicTextTyper();
+            }
         }
     }
 
@@ -88,39 +117,152 @@ public class BasicTextTyper : TextTyper
         this.color = color;
     }
 
-    /*protected virtual char[] ParseText(string text)
+    protected virtual char[] ParseText(string text)
     {
-        List<char> chars = new List<char>();
         // Parse string
-        for (int i = 0; i < text.Length; i++)
+        while (ContainsTag(text))
         {
-            if (text[i] != '<' && text[i + 1] != '<')
-            {
-                while (text[i] != '>' && text[i + 1] != '>')
-                {
-                    i++;
-                } // Removes Tags in the text
-            }
-            else
-            {
-                chars.Add(text[i]);
+            Debug.Log("Tag is in text");
+            text = ParseTag(text);
+        }
+        return RemoveAllEscapedEscapeKeys(text.ToCharArray());
+    }
+
+    private string ParseTag(string text)
+    {
+        int tagLoc = IndexOfTag(text);
+        string tag = GetTag(text);
+        string commandID = ScriptParser.ReadBetween(tag, "", "=");
+        commandID = ScriptParser.RemoveSurroundingSpaces(commandID);
+        string args = tag.Substring(tag.IndexOf("=") + 1);
+        args = ScriptParser.RemoveSurroundingSpaces(args);
+        text = RemoveTag(text);
+        BasicTextTyperCommand command = idToCommand[commandID]();
+        command.SetArgs(args);
+        Debug.Log("index of tag = " + tagLoc);
+        if (!locToTextCommand.ContainsKey(tagLoc))
+        {
+            locToTextCommand.Add(tagLoc, command);
+        }
+        else
+        {
+            BasicTextTyperCommand doubleCommand
+                = new TwoCommand(locToTextCommand[tagLoc], command);
+            locToTextCommand[tagLoc] = doubleCommand;
+        }
+        return text;
+    }
+
+    protected bool ContainsTag(string text)
+    {
+        return IndexOfTag(text) != -1;
+    }
+
+    protected int IndexOfTag(string text)
+    {
+        return IndexOfTag(text, 0);
+    }
+
+    /// <summary>
+    /// Returns true if the text contains | and it is not escaped.
+    /// </summary>
+    /// <param name="text"></param>
+    /// <returns></returns>
+    protected int IndexOfTag(string text, int startIndex)
+    {
+        // Assumes that if you place the start of a tag, there must be an end of the tag later in the text
+        for (int i = startIndex; i < text.Length; i++)
+        {
+            if (text.Substring(i, 1) == "|" && (i  == 0 || text.Substring(i - 1, 2) != "\\|")) {
+                return i;
             }
         }
-        // Copy to Array
-        char[] res = new char[chars.Count];
-        for (int i = 0; i < res.Length; i++)
+        return -1;
+    }
+
+    protected char[] RemoveAllEscapedEscapeKeys(char[] text)
+    {
+        List<char> newChars = new List<char>();
+        for (int i = 0; i < text.Length - 1; i++)
         {
-            res[i] = chars[i];
+            if (!(text[i] == '\\' && (text[i+1] == '\"' || text[i+1] == '|')))
+            {
+                newChars.Add(text[i]);
+            }
         }
-        return res;
-    }*/
+        newChars.Add(text[text.Length - 1]);
+        return newChars.ToArray();
+    }
+
+    protected string RemoveTag(string text)
+    {
+        int tagStart = IndexOfTag(text);
+        int tagEnd = IndexOfTag(text, tagStart + 1);
+        return text.Substring(0, tagStart) + text.Substring(tagEnd + 1);
+    }
+
+    protected string GetTag(string text)
+    {
+        int tagStart = IndexOfTag(text);
+        int tagEnd = IndexOfTag(text, tagStart + 1);
+        return text.Substring(tagStart + 1, tagEnd - tagStart - 1);
+    }
 }
 
-public interface BasicTextTyperCommand
+public abstract class BasicTextTyperCommand
 {
+    protected string args = null;
+
+    public delegate BasicTextTyperCommand Build();
+
     public delegate void BasicTextTyperCommandMethod();
 
-    public void ChangeBasicTextTyper();
+    public abstract void ChangeBasicTextTyper();
 
-    public void UndoChange();
+    public void SetArgs(string args)
+    {
+        this.args = args;
+    }
+}
+
+public class TwoCommand : BasicTextTyperCommand
+{
+    private BasicTextTyperCommand one;
+    private BasicTextTyperCommand two;
+
+    public TwoCommand(BasicTextTyperCommand one, BasicTextTyperCommand two)
+    {
+        this.one = one;
+        this.two = two;
+    }
+
+    public override void ChangeBasicTextTyper()
+    {
+        this.one.ChangeBasicTextTyper();
+        this.two.ChangeBasicTextTyper();
+    }
+
+    public override string ToString()
+    {
+        return one + ", " + two;
+    }
+}
+
+public class AddEvidenceCommand : BasicTextTyperCommand
+{
+    public static Build GetBuild()
+    {
+        return () => { return new AddEvidenceCommand(); };
+    }
+
+    public override void ChangeBasicTextTyper()
+    {
+        Thought evidence = NPCAssetManager.instance.GetEvidence(args);
+        GameManager.AddEvidenceMenu(evidence);
+    }
+
+    public override string ToString()
+    {
+        return "AddEvidenceCommand " + this.args;
+    }
 }

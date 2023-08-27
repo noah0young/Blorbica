@@ -8,7 +8,8 @@ public class Dialogue
 {
     private int index = 0;
     private List<Message> messages;
-    protected Dialogue next; // if null, the dialogue ends
+    protected Dialogue.Builder next; // if null, the dialogue ends
+    private Dictionary<string, Builder> idToDialogue;
 
     public class Builder
     {
@@ -22,34 +23,44 @@ public class Dialogue
         {
             if (nextDialoguePaths.Count == 0)
             {
-                Dialogue next = null;
+                Dialogue.Builder next = null;
                 if (defaultNextDialogue != null)
                 {
-                    next = idToDialogue[defaultNextDialogue].Build(idToDialogue);
+                    next = idToDialogue[defaultNextDialogue];//.Build(idToDialogue);
                 }
-                return new Dialogue(messages, next);
+                return new Dialogue(messages, next, idToDialogue);
             }
             else
             {
-                Dictionary<string, Dialogue> chosenToDialogue = new Dictionary<string, Dialogue>();
+                Dictionary<string, Dialogue.Builder> chosenToDialogue = new Dictionary<string, Dialogue.Builder>();
                 foreach (string key in nextDialoguePaths.Keys)
                 {
-                    chosenToDialogue.Add(key, idToDialogue[nextDialoguePaths[key]].Build(idToDialogue));
+                    chosenToDialogue.Add(key, idToDialogue[nextDialoguePaths[key]]);//.Build(idToDialogue));
                 }
-                return new OptionsDialogueBranch(messages, chosenToDialogue);
+                return new OptionsDialogueBranch(messages, idToDialogue, chosenToDialogue);
             }
         }
     }
 
-    public Dialogue(List<Message> messages, Dialogue next)
+    public Dialogue(List<Message> messages, Dialogue.Builder next, Dictionary<string, Builder> idToDialogue)
     {
         this.messages = messages;
         this.next = next;
+        this.idToDialogue = idToDialogue;
+    }
+
+    public virtual Dialogue GetNextDialogue()
+    {
+        if (next != null)
+        {
+            return next.Build(idToDialogue);
+        }
+        return this;
     }
 
     public NPCTextUI.TextUIState NextTextState()
     {
-        if (index < messages.Count)
+        /*if (index < messages.Count)
         {
             return MyTextState();
         }
@@ -61,7 +72,8 @@ public class Dialogue
         {
             Debug.Log("index = " + index + ", count = " + messages.Count);
             throw new System.Exception("Unknown state");
-        }
+        }*/
+        return MyTextState();
     }
 
     protected virtual NPCTextUI.TextUIState MyTextState()
@@ -71,7 +83,8 @@ public class Dialogue
 
     public virtual bool HasNext()
     {
-        if (InThisDialogue())
+        return InThisDialogue();
+        /*if (InThisDialogue())
         {
             return true;
         }
@@ -82,12 +95,14 @@ public class Dialogue
         else
         {
             return false;
-        }
+        }*/
     }
 
     public virtual Message Next()
     {
-        if (InThisDialogue())
+        index += 1;
+        return messages[index - 1];
+        /*if (InThisDialogue())
         {
             index += 1;
             return messages[index - 1];
@@ -99,12 +114,13 @@ public class Dialogue
         else
         {
             throw new System.Exception("No more dialogue remains");
-        }
+        }*/
     }
 
     public virtual List<string> GetPathNames()
     {
-        if (InThisDialogue())
+        throw new System.Exception("No paths exist right now");
+        /*if (InThisDialogue())
         {
             throw new System.Exception("No paths exist right now");
         }
@@ -115,7 +131,7 @@ public class Dialogue
         else
         {
             throw new System.Exception("No more dialogue remains");
-        }
+        }*/
     }
 
     protected virtual bool HasAnotherDialogue()
@@ -131,17 +147,17 @@ public class Dialogue
     public virtual void Reset()
     {
         index = 0;
-        if (next != null)
+        /*if (next != null)
         {
             next.Reset();
-        }
+        }*/
     }
 
     public virtual void ChoosePath(string pathName)
     {
-        if (InThisDialogue())
+        throw new System.Exception("No paths exist right now");
+        /*if (InThisDialogue())
         {
-            Debug.Log("index = " + index + ", count = " + messages.Count);
             throw new System.Exception("No paths exist right now");
         }
         else if (HasAnotherDialogue())
@@ -151,7 +167,7 @@ public class Dialogue
         else
         {
             throw new System.Exception("No more dialogue remains");
-        }
+        }*/
     }
 
     protected bool IsLastLine()
@@ -163,27 +179,37 @@ public class Dialogue
 public abstract class DialogueBranch : Dialogue
 {
     // Which ever path you choose leads to a dialogue
-    private Dictionary<string, Dialogue> chosenToDialogue;
+    private Dictionary<string, Dialogue.Builder> chosenToDialogue;
 
-    public DialogueBranch(List<Message> messages, Dialogue next, Dictionary<string, Dialogue> chosenToDialogue) : base(messages, next)
+    public DialogueBranch(List<Message> messages, Dialogue.Builder next, Dictionary<string, Builder> idToDialogue,
+        Dictionary<string, Dialogue.Builder> chosenToDialogue) : base(messages, next, idToDialogue)
     {
         this.chosenToDialogue = chosenToDialogue;
     }
 
     public override List<string> GetPathNames()
     {
-        if (next == null)
+        return new List<string>(chosenToDialogue.Keys);
+        /*if (next == null)
         {
             return new List<string>(chosenToDialogue.Keys);
         }
-        return next.GetPathNames();
+        return next.GetPathNames();*/
     }
 
     public override void ChoosePath(string pathName)
     {
-        if (next == null)
+        if (pathName != null && chosenToDialogue.ContainsKey(pathName))
         {
-            if (chosenToDialogue.ContainsKey(pathName))
+            next = chosenToDialogue[pathName];
+        }
+        else
+        {
+            throw new NoDialoguePathExists("No path exists for the given pathName");
+        }
+        /*if (next == null)
+        {
+            if (pathName != null && chosenToDialogue.ContainsKey(pathName))
             {
                 next = chosenToDialogue[pathName];
             }
@@ -195,7 +221,7 @@ public abstract class DialogueBranch : Dialogue
         else
         {
             next.ChoosePath(pathName);
-        }
+        }*/
     }
 
     protected override bool HasAnotherDialogue()
@@ -206,6 +232,10 @@ public abstract class DialogueBranch : Dialogue
     public override void Reset()
     {
         base.Reset(); // Resets the previous chosen path
+        /*if (next != null)
+        {
+            next.Reset();
+        }*/
         next = null; // Unselects path
     }
 }
@@ -217,8 +247,8 @@ public class NoDialoguePathExists : System.Exception
 
 public class OptionsDialogueBranch : DialogueBranch
 {
-    public OptionsDialogueBranch(List<Message> messages, Dictionary<string, Dialogue> chosenToDialogue)
-        : base(messages, null, chosenToDialogue) { }
+    public OptionsDialogueBranch(List<Message> messages, Dictionary<string, Builder> idToDialogue, Dictionary<string, Dialogue.Builder> chosenToDialogue)
+        : base(messages, null, idToDialogue, chosenToDialogue) { }
 
     protected override NPCTextUI.TextUIState MyTextState()
     {
@@ -232,10 +262,10 @@ public class OptionsDialogueBranch : DialogueBranch
 
 public class PresentingDialogueBranch : DialogueBranch
 {
-    private Dialogue incorrect;
+    private Dialogue.Builder incorrect;
 
-    public PresentingDialogueBranch(List<Message> messages, Dictionary<string, Dialogue> chosenToDialogue, Dialogue incorrect)
-        : base(messages, null, chosenToDialogue)
+    public PresentingDialogueBranch(List<Message> messages, Dictionary<string, Dialogue.Builder> idToDialogue, Dictionary<string, Dialogue.Builder> chosenToDialogue, Dialogue.Builder incorrect)
+        : base(messages, null, idToDialogue, chosenToDialogue)
     {
         this.incorrect = incorrect;
     }
@@ -246,16 +276,16 @@ public class PresentingDialogueBranch : DialogueBranch
 
         public override Dialogue Build(Dictionary<string, Dialogue.Builder> idToDialogue)
         {
-            Dictionary<string, Dialogue> chosenToDialogue = new Dictionary<string, Dialogue>();
+            Dictionary<string, Dialogue.Builder> chosenToDialogue = new Dictionary<string, Dialogue.Builder>();
             foreach (string key in nextDialoguePaths.Keys)
             {
-                chosenToDialogue.Add(key, idToDialogue[nextDialoguePaths[key]].Build(idToDialogue));
+                chosenToDialogue.Add(key, idToDialogue[nextDialoguePaths[key]]);//.Build(idToDialogue));
             }
-            Dialogue next = null;
+            Dialogue.Builder next = null;
             if (defaultNextDialogue != null) {
-                next = idToDialogue[defaultNextDialogue].Build(idToDialogue);
+                next = idToDialogue[defaultNextDialogue]; //.Build(idToDialogue);
             }
-            return new PresentingDialogueBranch(messages, chosenToDialogue, next);
+            return new PresentingDialogueBranch(messages, idToDialogue, chosenToDialogue, next);
         }
     }
 
@@ -263,6 +293,7 @@ public class PresentingDialogueBranch : DialogueBranch
     {
         if (IsLastLine())
         {
+            Debug.Log("Present Now");
             return NPCTextUI.TextUIState.PRESENT_EVIDENCE;
         }
         return NPCTextUI.TextUIState.TALKING;
@@ -285,7 +316,7 @@ public class SceneRedirectDialogue : Dialogue
 {
     private string nextScene;
 
-    public SceneRedirectDialogue(List<Message> messages, string nextScene) : base(messages, null)
+    public SceneRedirectDialogue(List<Message> messages, string nextScene) : base(messages, null, null)
     {
         this.nextScene = nextScene;
     }
