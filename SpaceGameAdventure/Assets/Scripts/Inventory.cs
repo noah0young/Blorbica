@@ -24,15 +24,25 @@ public abstract class Inventory : MonoBehaviour
     public abstract void SetObjective(Objective o);
 
     public abstract void AddKnowledge(Knowledge idea);
+
+    public abstract void MakeRemoveOneUI(Thought newOption);
+
+    public abstract void SetPresentingUI();
 }
 
 public abstract class InventoryUI : MonoBehaviour
 {
+    public abstract void Init();
+
     public abstract void SetMemorySlot(int index, Thought idea);
 
     public abstract void SetKnowledgeSlot(int index, Knowledge idea);
 
     public abstract void ShowHide(bool show);
+
+    public abstract void ShowThought(Thought e);
+
+    public abstract void HideThought(Thought e);
 }
 
 public class NoMoreThoughtSpaceException : System.Exception
@@ -57,35 +67,6 @@ public interface Thought
     public Sprite GetImage();
 }
 
-public class BasicThought : Thought
-{
-    private string name;
-    private string description;
-    private Sprite image;
-
-    public BasicThought(string name, string description, Sprite image)
-    {
-        this.name = name;
-        this.description = description;
-        this.image = image;
-    }
-
-    public string GetDescription()
-    {
-        return description;
-    }
-
-    public Sprite GetImage()
-    {
-        return image;
-    }
-
-    public string GetName()
-    {
-        return name;
-    }
-}
-
 /// <summary>
 /// This is what you get for answering a question correct at night,
 /// this is used at the end of the game to save the planet.
@@ -93,7 +74,7 @@ public class BasicThought : Thought
 /// </summary>
 public class Knowledge : BasicThought
 {
-    public Knowledge(Thought known) : base(known.GetName(), known.GetDescription(), known.GetImage()) { }
+    //public Knowledge(Thought known) : base(known.GetName(), known.GetDescription(), known.GetImage()) { }
 }
 
 

@@ -27,4 +27,14 @@ public class GameManager : MonoBehaviour
     {
         instance.inventory.SetObjective(StoryManager.GetNextObjective());
     }
+
+    public static void AddEvidenceMenu(Thought evidence)
+    {
+        instance.inventory.AddThought(evidence);
+    }
+
+    public static void SetPresentingUI()
+    {
+        instance.inventory.SetPresentingUI();
+    }
 }

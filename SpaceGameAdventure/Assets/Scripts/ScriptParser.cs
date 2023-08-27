@@ -80,7 +80,7 @@ public static class ScriptParser
             throw new System.Exception("End does not exist in ReadBetween");
         }
         int readStart = IndexOfOutOfQuote(text, start) + start.Length;//text.IndexOf(start) + start.Length;
-        int readEnd = IndexOfOutOfQuote(text, end, readStart);//text.IndexOf(end, readStart);
+        int readEnd = IndexOfOutsideOfQuote(text, end, readStart);//text.IndexOf(end, readStart);
         if (readEnd < readStart)
         {
             Debug.Log("end = " + readEnd);
@@ -106,12 +106,19 @@ public static class ScriptParser
 
     public static int IndexOfOutOfQuote(string text, string s)
     {
-        return IndexOfOutOfQuote(text, s, 0);
+        return IndexOfOutsideOfQuote(text, s, 0);
     }
 
-    public static int IndexOfOutOfQuote(string text, string s, int startIndex)
+    public static int IndexOfOutsideOfQuote(string text, string s, int startIndex)
     {
         bool inQuote = false;
+        for (int i = 0; i < startIndex; i++)
+        {
+            if ((text.Substring(i, 1) == "\"") && (i == 0 || text.Substring(i - 1, 2) != "\\\""))
+            {
+                inQuote = !inQuote;
+            }
+        }
         for (int i = startIndex; i < text.Length - s.Length + 1; i++)
         {
             bool prevInQuote = inQuote;
@@ -221,15 +228,15 @@ public static class ScriptParser
             curNPCBuilder = new NPCData.Builder();
             npcBuilders.Add(objectID, curNPCBuilder);
         }
-        else if (objectType.Contains("Dialogue"))
-        {
-            curDialogueBuilder = new Dialogue.Builder();
-            curDialogueBuilder.nextDialoguePaths = new Dictionary<string, string>();
-            dialogueBuilders.Add(objectID, curDialogueBuilder);
-        }
         else if (objectType.Contains("PresentingDialogue"))
         {
             curDialogueBuilder = new PresentingDialogueBranch.Builder();
+            curDialogueBuilder.nextDialoguePaths = new Dictionary<string, string>();
+            dialogueBuilders.Add(objectID, curDialogueBuilder);
+        }
+        else if (objectType.Contains("Dialogue"))
+        {
+            curDialogueBuilder = new Dialogue.Builder();
             curDialogueBuilder.nextDialoguePaths = new Dictionary<string, string>();
             dialogueBuilders.Add(objectID, curDialogueBuilder);
         }
@@ -334,7 +341,11 @@ public static class ScriptParser
     {
         string varName = RemoveSurroundingSpaces(ReadBetween(line, "", "="));
         string val = RemoveSurroundingSpaces(ReadBetween(line, "=", ";"));
-        if (val.Contains("\""))
+        if (val.StartsWith("null"))
+        {
+            val = null;
+        }
+        else if (val.Contains("\""))
         {
             val = ReadBetween(val, "\"", "\"");
         }
@@ -412,7 +423,14 @@ public static class ScriptParser
         {
             for (int i = 4; i < paramList.Count; i++)
             {
-                spriteIDs.Add(paramList[i]);
+                if (paramList[i].Contains("\""))
+                {
+                    spriteIDs.Add(ReadBetween(paramList[i], "\"", "\""));
+                }
+                else
+                {
+                    spriteIDs.Add(paramList[i]);
+                }
             }
         }
         curMessageList.Add(new BasicMessage(npcID, name, text, fontSize, spriteIDs));

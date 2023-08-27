@@ -45,8 +45,8 @@ talkSound = null;
 
 // Test Dialogues
 {Dialogue : "dialogueIDTest"}
-["You", null, "Hi there!"]
-["You", "You", "It's me!"]
+["You", null, "Hi there!", 10, "Bobby"]
+["You", "You", "|gain evidence = testEvidence||gain evidence = testEvidence1||gain evidence = testEvidence2||gain evidence = testEvidence3||gain evidence = testEvidence4||gain evidence = testEvidence5|It's me!"]
 </>
 {Dialogue : "dialogueIDTest2"}
 ["Scientist", "Scientist", "Can I say what that person is saying"]
@@ -59,14 +59,20 @@ talkSound = null;
 <"No", Dialogue : "dialogueIDTest2">
 <"Something", Dialogue : "dialogueIDTest4">
 <"Nothing", Dialogue : "dialogueIDTest5">
+<"Repeat", Dialogue : "dialogueIDTest6">
 </>
 {Dialogue : "dialogueIDTest4"}
 ["You", "You", "Yes, I do think something"]
 <Dialogue : "dialogueIDTest">
 </>
-{Dialogue : "dialogueIDTest5"}
+{PresentingDialogue : "dialogueIDTest5"}
 ["You", "You", "Am I sure?"]
 <"Yes", Dialogue : "dialogueIDTest">
-<"No", Dialogue : "dialogueIDTest2">
+<"Bobby", Dialogue : "dialogueIDTest2">
 <"To SampleScene", Scene : "SampleScene">
+<Dialogue : "dialogueIDTest">
+</>
+{Dialogue : "dialogueIDTest6"}
+["You", null, "\"Yes, I'll repeat!\""]
+<Dialogue : "dialogueIDTest3">
 </>
