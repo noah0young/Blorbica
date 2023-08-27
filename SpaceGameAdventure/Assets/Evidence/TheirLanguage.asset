@@ -10,8 +10,9 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d2b85f2d24132401ead01cdd7b9349e8, type: 3}
-  m_Name: Bobby 4
+  m_Name: TheirLanguage
   m_EditorClassIdentifier: 
-  thoughtName: Bobby4
-  description: This is Bobby. Why do I think of them as evidence
-  image: {fileID: 21300000, guid: 3042b019b052942a1baf7aa49d7ca6bb, type: 3}
+  thoughtName: Bobican
+  description: The language of Bobbies is Bobican. I guess that's the most common
+    language on Ababobica. I'd better learn it, or exploring this world will be difficult
+  image: {fileID: 21300000, guid: a67b58d6cddcd4345b1e001340de5a76, type: 3}

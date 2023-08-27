@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6418995786289631308}
   - component: {fileID: 2481832616842040495}
-  - component: {fileID: 180140811438002180}
+  - component: {fileID: 894456463153249417}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
@@ -47,7 +47,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   inventory: {fileID: 0}
   talkingUI: {fileID: 0}
---- !u!114 &180140811438002180
+--- !u!114 &894456463153249417
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -63,3 +63,5 @@ MonoBehaviour:
   - Day 1
   objectiveDescriptions:
   - Why aren't you working yet?
+  storyFilePaths:
+  - story.txt

@@ -23,9 +23,12 @@ public class StoryManager : MonoBehaviour
         {
             Destroy(gameObject);
         }
-        instance = this;
-        DontDestroyOnLoad(gameObject);
-        Init();
+        else
+        {
+            instance = this;
+            DontDestroyOnLoad(gameObject);
+            Init();
+        }
     }
 
     private void Init()
@@ -35,6 +38,7 @@ public class StoryManager : MonoBehaviour
         {
             objectives[i] = new Objective(objectiveNames[i], objectiveDescriptions[i]);
         }
+        Debug.Log("Parse Story");
         ScriptParser.Parse(storyFilePaths);
         /*npcToDialogue = new Dictionary<string, Dialogue>();
         // Temp Dialogue

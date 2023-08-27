@@ -205,6 +205,7 @@ public class BasicTextTyper : TextTyper
     {
         int tagStart = IndexOfTag(text);
         int tagEnd = IndexOfTag(text, tagStart + 1);
+        Debug.Log("text = " + text + ", start = " + tagStart + ", end = " + tagEnd);
         return text.Substring(tagStart + 1, tagEnd - tagStart - 1);
     }
 }

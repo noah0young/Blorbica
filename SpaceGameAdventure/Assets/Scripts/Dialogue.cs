@@ -199,6 +199,7 @@ public abstract class DialogueBranch : Dialogue
 
     public override void ChoosePath(string pathName)
     {
+        Debug.Log("Chose path =" + pathName);
         if (pathName != null && chosenToDialogue.ContainsKey(pathName))
         {
             next = chosenToDialogue[pathName];
@@ -329,6 +330,7 @@ public class SceneRedirectDialogue : Dialogue
 
         public override Dialogue Build(Dictionary<string, Dialogue.Builder> idToDialogue)
         {
+            Debug.Log("Built scene dialogue");
             if (nextDialoguePaths != null && nextDialoguePaths.Count != 0)
             {
                 throw new Exception("A Scene Redirect cannot have branching dialogue");
@@ -354,10 +356,8 @@ public class SceneRedirectDialogue : Dialogue
 
     public override Message Next()
     {
-        if (IsLastLine())
-        {
-            SceneManager.LoadScene(nextScene);
-        }
+        Debug.Log("Load next scene = " + nextScene);
+        SceneManager.LoadScene(nextScene);
         return base.Next();
     }
 

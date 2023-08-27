@@ -1,20 +1,22 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class BasicInventory : Inventory
 {
+    public static Inventory instance { get; private set; }
     [SerializeField] private InventoryUI ui;
 
     [Header("Thoughts")]
-    [SerializeField] private int maxNumOfThoughts = 5;
-    private Thought[] memory;
-    private List<Knowledge> myKnowledge;
-    private ISet<Thought> heldThoughts = new HashSet<Thought>();
+    private static int maxNumOfThoughts = 5;
+    private static Thought[] memory;
+    private static List<Knowledge> myKnowledge;
+    private static System.Collections.Generic.ISet<Thought> heldThoughts = new HashSet<Thought>();
 
     [Header("Objective Details")]
-    private Objective objective;
+    private static Objective objective;
 
     [Header("Remove One UI")]
     [SerializeField] private RemoveOneInventoryUI removeOneUI;
@@ -22,10 +24,33 @@ public class BasicInventory : Inventory
 
     private void Awake()
     {
-        memory = new Thought[maxNumOfThoughts];
-        ui.Init();
-        removeOneUI.Init();
-        removeOneUI.SetReplaceMethod(ReplaceThought);
+        if (instance != null)
+        {
+            Destroy(gameObject);
+        }
+        else
+        {
+            instance = this;
+            DontDestroyOnLoad(gameObject);
+            memory = new Thought[maxNumOfThoughts];
+            ui.Init();
+            removeOneUI.Init();
+            removeOneUI.SetReplaceMethod(ReplaceThought);
+            Refresh();
+        }
+    }
+
+    private void Refresh()
+    {
+        for (int i = 0; i < memory.Length; i++)
+        {
+            if (memory[i] != null)
+            {
+                ui.SetMemorySlot(i, memory[i]);
+                removeOneUI.SetMemorySlot(i, memory[i]);
+                presentingUI.SetMemorySlot(i, memory[i]);
+            }
+        }
     }
 
     public override void AddKnowledge(Knowledge idea)
@@ -43,6 +68,7 @@ public class BasicInventory : Inventory
         {
             if (memory[i] == null)
             {
+                Debug.Log("memory at i = " + i + " is null");
                 memory[i] = idea;
                 heldThoughts.Add(idea);
                 ui.SetMemorySlot(i, memory[i]);
@@ -96,7 +122,7 @@ public class BasicInventory : Inventory
 
     public override void SetObjective(Objective o)
     {
-        this.objective = o;
+        objective = o;
     }
 
     public override void MakeRemoveOneUI(Thought newEvidence)

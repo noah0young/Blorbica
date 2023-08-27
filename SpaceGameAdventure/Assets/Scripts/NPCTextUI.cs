@@ -95,8 +95,12 @@ public class NPCTextUI : MonoBehaviour
         {
             SetState(dialogue.NextTextState());
             Message message = dialogue.Next();
-            SetNPC(message.GetNpcID());
-            SetNPCImages(message.GetNPCsImageID());
+            if (state != TextUIState.SCENE_TRANSITION)
+            {
+                SetNPC(message.GetNpcID());
+                Debug.Log("Switch Sprite");
+                SetNPCImages(message.GetNPCsImageID());
+            }
             switch (state)
             {
                 case TextUIState.TALKING:

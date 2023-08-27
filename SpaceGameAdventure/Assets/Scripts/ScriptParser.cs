@@ -24,6 +24,7 @@ public static class ScriptParser
 
     public static NPCData GetNPCData(string id)
     {
+        Debug.Log("npcdata id = " + id);
         return npcBuilders[id].Build();
     }
 
@@ -220,6 +221,7 @@ public static class ScriptParser
         string objectType = ReadBetween(line, "{", ":");
         string objectIDUncropped = ReadBetween(line, ":", "}");
         string objectID = ReadBetween(objectIDUncropped, "\"", "\"");
+        Debug.Log("objectID = " + objectID);
         UseObjectID(objectID, lineNum);
         // Object Building Start
         curMessageList = new List<Message>();
@@ -316,11 +318,19 @@ public static class ScriptParser
         else if (nextDialogueType.StartsWith("Scene"))
         {
             string nextSceneID = ReadBetween(line, "\"", "\"");
-            UseObjectID(nextSceneID, lineNum);
-            SceneRedirectDialogue.Builder scenRedirectBuilder = new SceneRedirectDialogue.Builder();
-            scenRedirectBuilder.nextScene = nextSceneID;
-            scenRedirectBuilder.messages = new List<Message>();
-            dialogueBuilders.Add(nextSceneID, scenRedirectBuilder);
+            try
+            {
+                UseObjectID(nextSceneID, lineNum);
+                SceneRedirectDialogue.Builder scenRedirectBuilder = new SceneRedirectDialogue.Builder();
+                scenRedirectBuilder.nextScene = nextSceneID;
+                scenRedirectBuilder.messages = new List<Message>();
+                dialogueBuilders.Add(nextSceneID, scenRedirectBuilder);
+            }
+            catch (System.Exception e)
+            {
+                Debug.Log("Caught exception because dialogueBuilders[nextScene] = " + dialogueBuilders[nextSceneID]);
+                // Scene already exists
+            }
             if (option == null)
             {
                 curDialogueBuilder.defaultNextDialogue = nextSceneID;

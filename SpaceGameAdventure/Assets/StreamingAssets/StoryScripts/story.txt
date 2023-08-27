@@ -1,0 +1,183 @@
+// NPCs
+{NPC : "You"}
+timeBetweenChars = .1;
+font = "Philosopher";
+textBoxImage = "youImage";
+talkSound = "youSound";
+</>
+{NPC : "Tourist Rep"}
+timeBetweenChars = .1;
+</>
+{NPC : "Hotel Staff"}
+timeBetweenChars = .1;
+</>
+
+// Scene1 Dialogues
+{Dialogue : "Welcome"}
+["Tourist Rep", "Tourist Rep", "Hello and welcome to Ababobica! Sorry the president couldn’t make it, but I’m your tourist representative!", 10, "Tourist Rep"]
+["Tourist Rep", "Tourist Rep", "That means I’m here to represent your interests as a tourist and to show you around!", 10, "Tourist Rep Excited"]
+["You", "You", "I’m not here for tourism, I’m here to work.", 10, "Tourist Rep"]
+<"I’m not here for tourism, I’m here to work.", Dialogue : "1">
+<"Great! Thank you!", Dialogue : "2">
+<"No thanks, I’ll be alright on my own.", Dialogue : "3">
+<"...", Dialogue : "4">
+</>
+{Dialogue : "1"}
+["You", "You", "I’m not here for tourism, I’m here to work.", 10, "Tourist Rep Sad"]
+["Tourist Rep", "Tourist Rep", "In that case, I cannot be of any further assistance to you. Thanks for wasting my time. Bye.", 10, "Tourist Rep"]
+<"Wait! I was kidding, I’m a tourist!", Dialogue : "1A">
+<"...", Dialogue : "1B">
+</>
+{Dialogue : "1A"}
+["You", "You", "Wait! I was kidding, I’m a tourist!", 10, "Tourist Rep Excited"]
+["Tourist Rep", "Tourist Rep", "That wasn’t very nice, but I must do my job.", 10, "Tourist Rep Sad"]
+<Dialogue : "2">
+</>
+{Dialogue : "1B"}
+["You", "You", "...", 10, "Tourist Rep Sad"]
+["You", null, "[Tourist Rep leaves]"]
+<Scene : "Hotel">
+// To be changed later to a different scene
+</>
+{Dialogue : "2"}
+["You", "You", "Great! Thank you!", 10, "Tourist Rep Excited"]
+["Tourist Rep", "Tourist Rep", "By the way, you look a little green. Is that normal for humans?", 10, "Tourist Rep"]
+["Tourist Rep", "Tourist Rep", "Never mind, that’s probably insensitive to ask, but you can take note of me saying it by selecting \"Take evidence\"", 10, "Tourist Rep"]
+<Dialogue : "22">
+</>
+{Dialogue : "22"}
+["Tourist Rep", "Tourist Rep", "Is there anything you’d like to ask me to start off?", 10, "Tourist Rep"]
+<"Take evidence", Dialogue : "2A">
+<"I don’t have any questions at the moment.", Dialogue : "2B">
+<"What is the population of this planet?", Dialogue : "2C">
+<"What’s your name?", Dialogue : "2D">
+<"How do I know you are who you say you are?", Dialogue : "2E">
+</>
+{Dialogue : "2A"}
+["You", "You", "[I|gain evidence = feelingSick| should never fly on a spaceship again]", 10, "Tourist Rep Excited"]
+<Dialogue : "22">
+</>
+{Dialogue : "2B"}
+["You", "You", "I don’t have any questions at the moment.", 10, "Tourist Rep"]
+["Tourist Rep", "Tourist Rep", "Very well. I’ll show you to your hotel now then. Come back to me if you come up with any.", 10, "Tourist Rep"]
+<Scene : "Hotel">
+</>
+{Dialogue : "2C"}
+["You", "You", "What is the population of this planet?", 10, "Tourist Rep"]
+["Tourist Rep", "Tourist Rep", "Ababobica!", 10, "Tourist Rep Excited"]
+["You", "You", "No, I mean how many of you are there?", 10, "Tourist Rep Sad"]
+["Tourist Rep", "Tourist Rep", "There are trillions of us! Any other questions?", 10, "Tourist Rep"]
+<Dialogue : "22">
+</>
+{Dialogue : "2D"}
+["You", "You", "What’s your name?", 10, "Tourist Rep"]
+["Tourist Rep", "Tourist Rep", "That’s on a need to know basis, and you don’t. Any other questions?", 10, "Tourist Rep"]
+<Dialogue : "22">
+</>
+{Dialogue : "2E"}
+["You", "You", "How do I know you are who you say you are?", 10, "Tourist Rep"]
+["Tourist Rep", "Tourist Rep", "You don’t! Any other questions?", 10, "Tourist Rep"]
+<Dialogue : "22">
+</>
+{Dialogue : "3"}
+["You", "You", "No thanks, I’ll be alright on my own.", 10, "Tourist Rep"]
+["Tourist Rep", "Tourist Rep", "Oh. Ok. I’ll be on my way then.", 10, "Tourist Rep"]
+<Scene : "Hotel">
+</>
+{Dialogue : "4"}
+["You", "You", "...", 10, "Tourist Rep"]
+["Tourist Rep", "Tourist Rep", "Are you alive?", 10, "Tourist Rep"]
+<"No", Dialogue : "4A">
+<"Yes", Dialogue : "4B">
+<"...", Dialogue : "4C">
+</>
+{Dialogue : "4A"}
+["You", "You", "No", 10, "Tourist Rep"]
+["You", null, "[The Tourist Rep left...]"]
+<Scene : "Hotel">
+</>
+{Dialogue : "4B"}
+["You", "You", "Yes", 10, "Tourist Rep"]
+["Tourist Rep", "Tourist Rep", "Alright then.", 10, "Tourist Rep"]
+<Dialogue : "22">
+</>
+{Dialogue : "4C"}
+["You", "You", "...", 10, "Tourist Rep"]
+["You", null, "[And so, time passed...]"]
+["You", null, "[And it passed...]"]
+["You", null, "[And it passed...]"]
+["You", null, "[And the Tourist Rep left...]"]
+<Scene : "Hotel">
+</>
+{Dialogue : "Hotel Staff 1st"}
+["Hotel Staff", "Hotel Staff", "Hello, welcome to the greatest hotel in the world!", 10, "Hotel Staff"]
+["You", "You", "What makes it so great?", 10, "Hotel Staff"]
+["Hotel Staff", "Hotel Staff", "It’s the one you’re staying in!", 10, "Hotel Staff"]
+["You", "You", "I suppose that makes sense."]
+</>
+{Dialogue : "Waiter 1st"}
+["Hotel Staff", "Waiter", "What would you like to eat and drink?", 10, "Waiter"]
+<"May I see a menu?", Dialogue : "MenuPlease">
+<"Hamgurger", Dialogue : "Hamgurger">
+<"Can you look at this?", Dialogue : "WaiterLook">
+</>
+{Dialogue : "MenuPlease"}
+["You", "You", "May I see a menu?", 10, "Waiter"]
+["Hotel Staff", "Waiter", "No.|gain evidence = noMenus| Just tell me what you want and I’ll see what the chef can make that’s closest to it.", 10, "Waiter"]
+</>
+{Dialogue : "Hamgurger"}
+["You", "You", "Can I have a hamgurger", 10, "Waiter"]
+["Hotel Staff", "Waiter", "A what?", 10, "Waiter"]
+["You", "You", "A hamgurger", 10, "Waiter"]
+["Hotel Staff", "Waiter", "A what?", 10, "Waiter"]
+["You", "You", "A hamgurger", 10, "Waiter"]
+["Hotel Staff", "Waiter", "A what?", 10, "Waiter"]
+["You", "You", "Never mind...", 10, "Waiter"]
+</>
+{PresentingDialogue : "WaiterLook"}
+["You", "You", "Can you look at this?", 10, "Waiter"]
+<"No Menus", Dialogue : "NoMenuRes">
+<Dialogue : "WaiterNoLook">
+</>
+{Dialogue : "WaiterNoLook"}
+["You", "You", "Can you look at this?", 10, "Waiter"]
+["Hotel Staff", "Waiter", "Does it have to do with what you want to order?", 10, "Waiter"]
+["You", "You", "No...", 10, "Waiter"]
+["Hotel Staff", "Waiter", "Then, no, I can't", 10, "Waiter"]
+</>
+{Dialogue : "NoMenuRes"}
+["You", "You", "There are no menus here?", 10, "Waiter"]
+["Hotel Staff", "Waiter", "Well, there is the one in my hand... but it's only in Bobican", 10, "Waiter"]
+["You", "You", "Bobican?", 10, "Waiter"]
+["Hotel Staff", "Waiter", "It's the |gain evidence = theirLanguage|language of Bobbies", 10, "Waiter"]
+["You", "You", "Oh, then, how do you say", 10, "Waiter"]
+<"Hamburger in Bobican", Dialogue : "IReallyWantAHamburger">
+<"May I have the menu in Bobican", Dialogue : "IReallyWantAMenu">
+<"Good bye in Bobican", Dialogue : "GoodByeWaiter">
+</>
+{Dialogue : "IReallyWantAHamburger"}
+["You", "You", "How do you say \"hamburger\" in Bobican?", 10, "Waiter"]
+["Hotel Staff", "Waiter", "A what?", 10, "Waiter"]
+["You", "You", "A hamgurger", 10, "Waiter"]
+["Hotel Staff", "Waiter", "A what?", 10, "Waiter"]
+["You", "You", "A hamgurger", 10, "Waiter"]
+["Hotel Staff", "Waiter", "A what?", 10, "Waiter"]
+["You", "You", "Never mind...", 10, "Waiter"]
+</>
+{Dialogue : "IReallyWantAMenu"}
+["You", "You", "How do you say \"May I have the menu\" in Bobican?", 10, "Waiter"]
+["Hotel Staff", "Waiter", "Oh, why didn't you say so", 10, "Waiter"]
+["You", "You", "Um, I tried to..."]
+["Hotel Staff", "Waiter", "That's how you say \"May I have the menu\"", 10, "Waiter"]
+["Hotel Staff", "Waiter", "\"Oh, why didn't you say so\"", 10, "Waiter"]
+["You", "You", "Oh..."]
+</>
+{Dialogue : "GoodByeWaiter"}
+["You", "You", "How do you say \"Good bye\" in Bobican?", 10, "Waiter"]
+["Hotel Staff", "Waiter", "Rabob o bobab bob", 10, "Waiter"]
+["You", "You", "Um, Ra-bab a bab-ab ba-b?"]
+["Hotel Staff", "Waiter", "Yes, I am having a fine day today, how about you", 10, "Waiter"]
+["You", "You", "[I've learnt two things about Bobican]"]
+["You", "You", "[1. Rabob o bobab bob is Good bye]"]
+["You", "You", "[2. Ra-bab a bab-ab ba-b? is How has your day been]"]
+</>
