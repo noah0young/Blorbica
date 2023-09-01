@@ -13,7 +13,7 @@ public class StoryManager : MonoBehaviour
     [SerializeField] private string[] objectiveNames;
     [SerializeField] private string[] objectiveDescriptions;
     private static Objective[] objectives;
-    [SerializeField] private string[] storyFilePaths;
+    [SerializeField] private TextAsset[] storyFiles;
     //private static Dictionary<string, Dialogue> npcToDialogue;
 
     // Start is called before the first frame update
@@ -39,7 +39,7 @@ public class StoryManager : MonoBehaviour
             objectives[i] = new Objective(objectiveNames[i], objectiveDescriptions[i]);
         }
         Debug.Log("Parse Story");
-        ScriptParser.Parse(storyFilePaths);
+        ScriptParser.Parse(storyFiles);
         /*npcToDialogue = new Dictionary<string, Dialogue>();
         // Temp Dialogue
         List<Message> tempLines = new List<Message>();

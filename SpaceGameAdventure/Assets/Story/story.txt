@@ -7,9 +7,15 @@ talkSound = "youSound";
 </>
 {NPC : "Tourist Rep"}
 timeBetweenChars = .1;
+talkSound = "alienSound";
 </>
 {NPC : "Hotel Staff"}
 timeBetweenChars = .1;
+talkSound = "waiterSound";
+</>
+{NPC : "Boss Computer"}
+timeBetweenChars = .07;
+talkSound = "computerSound";
 </>
 
 // Scene1 Dialogues
@@ -179,5 +185,46 @@ timeBetweenChars = .1;
 ["Hotel Staff", "Waiter", "Yes, I am having a fine day today, how about you", 10, "Waiter"]
 ["You", "You", "[I've learnt two things about Bobican]"]
 ["You", "You", "[1. Rabob o bobab bob is Good bye]"]
-["You", "You", "[2. Ra-bab a bab-ab ba-b? is How has your day been]"]
+["You", "You", "[2. Ra-bab a bab-ab ba-b is How has your day been]"]
+</>
+
+
+// Night 1
+{Dialogue : "Night1"}
+["Boss Computer", "Boss", "So it appears you safely arrived in Ababobica", 10, "Boss Computer Smile"]
+["You", "You", "Yes, Manager!", 10, "Boss Computer Smile"]
+["Boss Computer", "Boss", "Good. Then, let's hear your report for today", 10, "Boss Computer"]
+["You", "You", "Um... I was supposed to prepare a report [I don't remember hearing about this...]", 10, "Boss Computer"]
+["Boss Computer", "Boss", "Yes, you were meant to prepare a report on Ababobican culture. This report is of the utmost importance to us at UMS", 10, "Boss Computer Angry"]
+["You", "You", "Ack! [I completely forgot about the report]", 10, "Boss Computer"]
+["You", "You", "[I guess I'll have to wing it and talk about what I remember]", 10, "Boss Computer"]
+["Boss Computer", "Boss", "Are you prepared to give your report now?", 10, "Boss Computer Smile"]
+<"Yes", Dialogue : "Night1Report">
+<"Give me a few minutes", Dialogue : "Night1ReportDelay">
+</>
+{Dialogue : "Night1ReportDelay"}
+["Boss Computer", "Boss", "No, you had your chance to gather your thoughts before this. Now give your report", 10, "Boss Computer Angry"]
+<"Yes", Dialogue : "Night1Report">
+</>
+{Dialogue : "Night1Report"}
+["Boss Computer", "Boss", "Great! Then let's begin", 10, "Boss Computer Smile"]
+["Boss Computer", "Boss", "Now, I understand you are new to UMS", 10, "Boss Computer Smile"]
+<"Yes, I just started last month", Dialogue : "ImAnIntern">
+<"No, I started last month", Dialogue : "ImAnIntern">
+</>
+{Dialogue : "ImAnIntern"}
+["Boss Computer", "Boss", "Ah, yes, you are that summer intern", 10, "Boss Computer Smile"]
+["Boss Computer", "Boss", "But I believe you are mistaken, it's already been a month and a half", 10, "Boss Computer"]
+["You", "You", "A month and a half!? [But it was only May 32nd when I left, and I started at the beginning of May]", 10, "Boss Computer"]
+["Boss Computer", "Boss", "Oh, did you not read the fine print when you signed your waver to go to Ababobica", 10, "Boss Computer Smile"]
+["You", "You", "No... [Who reads that]", 10, "Boss Computer"]
+["Boss Computer", "Boss", "Oh, so you may not know, but Ababobica is in it's own timezone", 10, "Boss Computer"]
+["Boss Computer", "Boss", "1 day there is half |gain evidence = timeGoesBy| a month in Earth time", 10, "Boss Computer"]
+["Boss Computer", "Boss", "In otherwords, you only have 5 days there until your internship ends.", 10, "Boss Computer Smile"]
+["Boss Computer", "Boss", "Be sure to use your time wisely", 10, "Boss Computer"]
+</>
+{PresentingDialogue : "Night1Q1"}
+["Boss Computer", "Boss", "First, how was your ride to Ababobica?", 10, "Boss Computer"]
+<"Sick-feeling", Dialogue : "MyTripWasAwful">
+<Dialogue : "MyTripWas?">
 </>

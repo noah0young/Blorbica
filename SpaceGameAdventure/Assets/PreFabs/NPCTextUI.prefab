@@ -2288,14 +2288,20 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   defaultSFX: {fileID: 8300000, guid: df5aac98f8c1044f39847dad60c2c1f0, type: 3}
   sfx:
-  - {fileID: 8300000, guid: df5aac98f8c1044f39847dad60c2c1f0, type: 3}
+  - {fileID: 8300000, guid: a4b5b682bb64746a9aeb790a19d1c5f2, type: 3}
   - {fileID: 8300000, guid: 73de65fc315274e4293f67ee7bf2e6b9, type: 3}
   - {fileID: 8300000, guid: 73de65fc315274e4293f67ee7bf2e6b9, type: 3}
+  - {fileID: 8300000, guid: a69d0d8bfb53f4d7cae71d00d9e03364, type: 3}
+  - {fileID: 8300000, guid: ae84008edcdfd4fb8936fcf67be3272d, type: 3}
+  - {fileID: 8300000, guid: ae84008edcdfd4fb8936fcf67be3272d, type: 3}
   sfxNames:
   - youSound
   - roboticSound
   - foodSound
-  defaultFont: {fileID: 11400000, guid: 9008c9b0b86c2f64e909cf71087b7115, type: 2}
+  - computerSound
+  - waiterSound
+  - alienSound
+  defaultFont: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   fonts:
   - {fileID: 11400000, guid: 3ebbc6b49da9d4b4aa9e7ff8fa404fcd, type: 2}
   - {fileID: 11400000, guid: 2e498d1c8094910479dc3e1b768306a4, type: 2}
@@ -2310,22 +2316,30 @@ MonoBehaviour:
   - {fileID: 11400000, guid: b2142a1386a9e4a7ba63e63655fab42f, type: 2}
   - {fileID: 11400000, guid: 02653c96a37c14d49983af6a3cf4793f, type: 2}
   - {fileID: 11400000, guid: c69a3239a95b04570a93124b8e17c08b, type: 2}
+  - {fileID: 11400000, guid: 58f49c8a26fa4448aab99d88dea386ba, type: 2}
   evidenceNames:
   - feelingSick
   - noMenus
   - theirLanguage
+  - timeGoesBy
   sprites:
   - {fileID: 21300000, guid: 19c7488a5237b4f348a5b5f625b01a5f, type: 3}
   - {fileID: 21300000, guid: 19c7488a5237b4f348a5b5f625b01a5f, type: 3}
   - {fileID: 21300000, guid: 19c7488a5237b4f348a5b5f625b01a5f, type: 3}
   - {fileID: 21300000, guid: bf57d30741d154528a630227a0704401, type: 3}
   - {fileID: 21300000, guid: ff51bcdb5b4e54d6aa31b096c382baac, type: 3}
+  - {fileID: 21300000, guid: 71243183c03864b1f80e70341c32f8cc, type: 3}
+  - {fileID: 21300000, guid: 71243183c03864b1f80e70341c32f8cc, type: 3}
+  - {fileID: 21300000, guid: 71243183c03864b1f80e70341c32f8cc, type: 3}
   spriteNames:
   - Tourist Rep
   - Tourist Rep Excited
   - Tourist Rep Sad
   - Hotel Staff
   - Waiter
+  - Boss Computer
+  - Boss Computer Smile
+  - Boss Computer Angry
 --- !u!1 &6198701039655913760
 GameObject:
   m_ObjectHideFlags: 0

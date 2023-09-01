@@ -63,5 +63,5 @@ MonoBehaviour:
   - Day 1
   objectiveDescriptions:
   - Why aren't you working yet?
-  storyFilePaths:
-  - story.txt
+  storyFiles:
+  - {fileID: 4900000, guid: 256a52b17049d45e48d597cd6432402f, type: 3}

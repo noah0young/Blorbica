@@ -28,22 +28,24 @@ public static class ScriptParser
         return npcBuilders[id].Build();
     }
 
-    public static void Parse(string[] filePaths)
+    public static void Parse(TextAsset[] files)//string[] filePaths)
     {
-        foreach (string filePath in filePaths)
+        foreach (TextAsset file in files)
         {
-            ParseFile(Application.streamingAssetsPath + "/StoryScripts/" + filePath);
+            ParseFile(file);
         }
     }
 
-    private static void ParseFile(string filePath)
+    private static void ParseFile(TextAsset file)
     {
-        FileStream file = File.Open(filePath, FileMode.Open);
-        StreamReader reader = new StreamReader(file);
+        //FileStream file = File.Open(filePath, FileMode.Open);
+        //StreamReader reader = new StreamReader(file);
+        string fileText = file.text;
         int lineNum = 1;
-        while (reader.Peek() != -1)
+        while (fileText.IndexOf("\n") != -1)//reader.Peek() != -1)
         {
-            string line = reader.ReadLine();
+            string line = fileText.Substring(0, fileText.IndexOf("\n"));//reader.ReadLine();
+            fileText = fileText.Substring(fileText.IndexOf("\n") + 1);
             line = RemoveLeadingSpaces(line);
             ParserLineType lineType = GetLineType(line);
             switch (lineType)
