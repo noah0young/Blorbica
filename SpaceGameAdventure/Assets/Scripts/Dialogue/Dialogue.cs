@@ -377,6 +377,12 @@ public interface Message
 
     public string GetNpcID();
 
+    public void SetText(string text);
+
+    public void SetName(string name);
+
+    public void SetNPCImageIDs(List<string> ids);
+
     public float GetFontSize();
 }
 
@@ -429,5 +435,20 @@ public class BasicMessage : Message
     public string GetText()
     {
         return text;
+    }
+
+    public void SetText(string text)
+    {
+        this.text = text;
+    }
+
+    public void SetName(string name)
+    {
+        this.name = name;
+    }
+
+    public void SetNPCImageIDs(List<string> ids)
+    {
+        this.spriteIDs = ids;
     }
 }

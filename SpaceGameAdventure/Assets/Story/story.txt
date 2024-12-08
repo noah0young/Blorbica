@@ -1,20 +1,20 @@
 // NPCs
 {NPC : "You"}
-timeBetweenChars = .1;
+timeBetweenChars = .05;
 font = "Philosopher";
 textBoxImage = "youImage";
 talkSound = "youSound";
 </>
 {NPC : "Tourist Rep"}
-timeBetweenChars = .1;
+timeBetweenChars = .05;
 talkSound = "alienSound";
 </>
 {NPC : "Hotel Staff"}
-timeBetweenChars = .1;
+timeBetweenChars = .05;
 talkSound = "waiterSound";
 </>
 {NPC : "Boss Computer"}
-timeBetweenChars = .07;
+timeBetweenChars = .03;
 talkSound = "computerSound";
 </>
 
